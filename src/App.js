@@ -1,40 +1,97 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import '@fontsource/manrope';
 import {
+  Center,
   ChakraProvider,
-  Box,
+  Stack,
   Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
+  extendTheme,
+  Circle,
+  IconButton,
 } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
+import MobileDivider from './svgs/MobileDivider';
+import DeskDivider from './svgs/DeskDivider';
+import DiceSVG from './svgs/DiceSVG';
+
+const theme = extendTheme({
+  fonts: {
+    body: ' sans-serif, "Manrope"',
+  },
+});
 
 function App() {
+  const [advice, setAdvice] = useState('');
+  const [restart, setRestart] = useState(true);
+  const [width, setWidth] = React.useState(window.innerWidth);
+
+  const handleRestart = () => {
+    window.location.reload();
+    setRestart(!restart);
+  };
+
+  useEffect(() => {
+    const getAdvice = async () => {
+      try {
+        const { data } = await axios.get('https://api.adviceslip.com/advice');
+        console.log(data.slip.advice);
+
+        setAdvice(data.slip);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAdvice();
+
+    const handleResizeWindow = () => setWidth(window.innerWidth);
+    // subscribe to window resize event "onComponentDidMount"
+    window.addEventListener('resize', handleResizeWindow);
+    return () => {
+      // unsubscribe "onComponentDestroy"
+      window.removeEventListener('resize', handleResizeWindow);
+    };
+  }, [restart]);
+
   return (
     <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          <VStack spacing={8}>
-            <Logo h="40vmin" pointerEvents="none" />
-            <Text>
-              Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
-            </Text>
-            <Link
-              color="teal.500"
-              href="https://chakra-ui.com"
-              fontSize="2xl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn Chakra
-            </Link>
-          </VStack>
-        </Grid>
-      </Box>
+      <Center bg="#202632" h="100vh">
+        <Stack
+          bg="#313a49"
+          p="4rem"
+          borderRadius="1rem"
+          paddingTop="2rem"
+          paddingBottom="-1"
+          w={{ base: '90%', md: '70%', lg: '35%' }}
+          spacing="2rem"
+        >
+          <Text
+            as="p"
+            fontSize="sm"
+            color="#56fdab"
+            fontWeight="semibold"
+            align="center"
+          >
+            ADVICE #{advice.id}
+          </Text>
+          <Text align="center" color="#d3e1ee" fontSize="2xl" fontWeight="bold">
+            "{advice.advice}"
+          </Text>
+          <Center>{width <= 375 ? <MobileDivider /> : <DeskDivider />}</Center>
+          <Circle>
+            <IconButton
+              bg="#56fdab"
+              isRound="true"
+              _hover={{
+                boxShadow: '0 0 25px 10px #56fdab;',
+              }}
+              icon={<DiceSVG />}
+              onClick={handleRestart}
+              size="lg"
+              marginBottom="-1.5rem"
+            ></IconButton>
+          </Circle>
+        </Stack>
+      </Center>
     </ChakraProvider>
   );
 }
