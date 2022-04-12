@@ -57,11 +57,11 @@ function App() {
       <Center bg="#202632" h="100vh">
         <Stack
           bg="#313a49"
-          p="4rem"
+          p={{ base: '1rem', md: '2rem', lg: '4rem' }}
           borderRadius="1rem"
           paddingTop="2rem"
           paddingBottom="-1"
-          w={{ base: '90%', md: '70%', lg: '35%' }}
+          w={{ base: '90%', md: '70%', lg: '55%', xl: '38%' }}
           spacing="2rem"
         >
           <Text
@@ -76,7 +76,7 @@ function App() {
           <Text align="center" color="#d3e1ee" fontSize="2xl" fontWeight="bold">
             "{advice.advice}"
           </Text>
-          <Center>{width <= 375 ? <MobileDivider /> : <DeskDivider />}</Center>
+          <Center>{width <= 640 ? <MobileDivider /> : <DeskDivider />}</Center>
           <Circle>
             <IconButton
               bg="#56fdab"
@@ -87,7 +87,12 @@ function App() {
               icon={<DiceSVG />}
               onClick={handleRestart}
               size="lg"
-              marginBottom="-1.5rem"
+              marginBottom={{
+                base: '-1.5rem',
+                md: '-4rem',
+                lg: '-8rem',
+                xl: '-8rem',
+              }}
             ></IconButton>
           </Circle>
         </Stack>
