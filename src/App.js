@@ -26,21 +26,25 @@ function App() {
   const [width, setWidth] = React.useState(window.innerWidth);
 
   const handleRestart = () => {
-    window.location.reload();
+    //window.location.reload();
     setRestart(!restart);
   };
 
-  useEffect(() => {
-    const getAdvice = async () => {
-      try {
-        const { data } = await axios.get('https://api.adviceslip.com/advice');
-        console.log(data.slip.advice);
+  const getAdvice = async () => {
+    try {
+      const { data } = await axios.get('https://api.adviceslip.com/advice', {
+        params: { t: new Date().getTime() },
+      });
 
-        setAdvice(data.slip);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+      //console.log(data.slip.advice);
+
+      setAdvice(data.slip);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
     getAdvice();
 
     const handleResizeWindow = () => setWidth(window.innerWidth);
